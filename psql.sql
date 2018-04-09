@@ -16,6 +16,8 @@ CREATE TABLE release_rcpt (
 	id          BIGSERIAL PRIMARY KEY,
 	release_id  BIGINT REFERENCES release_sender (id),
 	status      INT DEFAULT 0,
+	whitelist   INT DEFAULT 0,
+	blacklist   INT DEFAULT 0,
 	queueid     BIGINT,
 	msgto       VARCHAR(300),
 	token       TEXT

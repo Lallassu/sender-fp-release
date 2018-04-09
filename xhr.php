@@ -33,6 +33,47 @@ if (isset($_POST['page']) && $_POST['page'] == 'report') {
 	die(json_encode(['status' => 'ok']));
 }
 
+if (isset($_POST['page']) && $_POST['page'] == 'blacklist') {
+    // TBD: Create a function for release
+	try {
+		if (!isset($_POST['id']) || !isset($_POST['token']))
+			throw new UIException('Missing argument.');
+
+		$q = $dbh->prepare('UPDATE release_rcpt SET status = 1, blacklist = 1 WHERE id=:id AND token=:token;');
+		$result = $q->execute([
+			':id' => $_POST['id'],
+			':token' => $_POST['token'],
+		]);
+		if (!$result)
+			throw new UIException('Query error.');
+	} catch (UIException $e) {
+		die(json_encode(['error' => $e->getMessage()]));
+	}
+
+	die(json_encode(['status' => 'ok']));
+}
+
+
+if (isset($_POST['page']) && $_POST['page'] == 'whitelist') {
+    // TBD: Create a function for release
+	try {
+		if (!isset($_POST['id']) || !isset($_POST['token']))
+			throw new UIException('Missing argument.');
+
+		$q = $dbh->prepare('UPDATE release_rcpt SET status = 1, whitelist = 1 WHERE id=:id AND token=:token;');
+		$result = $q->execute([
+			':id' => $_POST['id'],
+			':token' => $_POST['token'],
+		]);
+		if (!$result)
+			throw new UIException('Query error.');
+	} catch (UIException $e) {
+		die(json_encode(['error' => $e->getMessage()]));
+	}
+
+	die(json_encode(['status' => 'ok']));
+}
+
 if (isset($_POST['page']) && $_POST['page'] == 'release') {
 	try {
 		if (!isset($_POST['id']) || !isset($_POST['token']))

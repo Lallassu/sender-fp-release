@@ -119,3 +119,39 @@ while ($row = $q->fetch(PDO::FETCH_ASSOC)) {
 	$q2 = $dbh->prepare('UPDATE release_rcpt SET status = 2 WHERE id = :id;');
 	$q2->execute([':id' => $row['id']]);
 }
+
+// Whitelist && blacklist
+$q = $dbh->prepare('SELECT * FROM release_sender AS r INNER JOIN release_rcpt AS rr ON r.id = rr.release_id WHERE rr.blacklist = 1 OR rr.whitelist = 1;');
+$q->execute();
+while ($row = $q->fetch(PDO::FETCH_ASSOC)) {
+    $id = $row['msgid'];
+
+    $type = "";
+    if($row['blacklist'] == 1) {
+        $type = "blacklist";
+        # Clean up whitelist if it exists so we don't end up with multiple rules.
+        $q2 = $dbh_bw->prepare('DELETE from bwlist WHERE access = :access AND type = "whitelist" AND value = :value');
+        $q2->execute([':value' => $row['msgfrom'], 'access' => $row['msgto']]);
+    } else if($row['whitelist'] == 1) {
+        $type = "whitelist";
+        # Clean up blacklist if it exists so we don't end up with multiple rules.
+        $q2 = $dbh_bw->prepare('DELETE from bwlist WHERE access = :access AND type = "blacklist" AND value = :value');
+        $q2->execute([':value' => $row['msgfrom'], 'access' => $row['msgto']]);
+    } else {
+        continue;
+    }
+	echo "$type $id from ".$host_options['location']."\n";
+        
+    # Value = From
+    # access = To
+    $q2 = $dbh_bw->prepare('REPLACE INTO bwlist SET access = :access, type = :type, value = :value');
+	$q2->execute([':type' => $type, ':value' => $row['msgfrom'], 'access' => $row['msgto']]);
+
+    if($type == "whitelist") {
+    	$q3 = $dbh->prepare('UPDATE release_rcpt SET whitelist = 0 WHERE id = :id;');
+    } else {
+    	$q3 = $dbh->prepare('UPDATE release_rcpt SET blacklist = 0 WHERE id = :id;');
+    }
+	$q3->execute([':id' => $row['id']]);
+}
+

@@ -30,12 +30,19 @@
 					<input type="hidden" id="id" value="{{ id }}">
 					<input type="hidden" id="token" value="{{ token }}">
 					<input type="hidden" id="state" value="{{ currentState }}">
-					<button class="btn btn-{{ states[currentState] }} float-right" name="btn-release" id="btn-release" type="submit">
+					<button onclick="release('blacklist')" style="margin-left: 5px;" class="btn btn-danger float-right" name="btn-blacklist" id="btn-blacklist" type="submit">
+						<span id="btn-blacklist-label"><i class="far fa-times-circle"></i>&nbsp;Blacklist Sender</span>
+					</button>
+					<button onclick="release('whitelist')" style="margin-left: 5px;" class="btn btn-success float-right" name="btn-whitelist" id="btn-whitelist" type="submit">
+						<span id="btn-whitelist-label"><i class="far fa-check-circle"></i>&nbsp;Whitelist Sender</span>
+					</button>
+					<button onclick="release('release')" value="release" class="btn btn-{{ states[currentState] }} float-right" name="btn-release" id="btn-release" type="submit">
 						<span id="btn-release-label"><i class="far fa-paper-plane"></i>&nbsp;Release</span>
-						<span id="btn-sending-label" hidden><i class="fas fa-spinner fa-spin"></i>&nbsp;Sending...</span>
 					</button>
 				</form>
+                <br>
 			</div>
+            <span class="text-center" style="margin: 5px;" id="btn-sending-label" hidden><i class="fas fa-spinner fa-spin"></i>&nbsp;Please wait...</span>
 			<div class="card-footer alert-{{ states[currentState] }}" id="release-footer">
 				<span id="status-warning" {% if currentState != 0 %}hidden{% endif %}><strong>Warning!</strong> This is an email which was blocked by an anti-spam/virus filter. Just like any other email, it may contain malicious content.</span>
 				<span id="status-sending" {% if currentState != 1 %}hidden{% endif %}>Please wait while the email is being sent to you.</span>
@@ -106,7 +113,8 @@
 						You follow the link in that report, and end up on this page
 						<ul>
 							<li>If you release the email within 7 days, it will be delivered to you</li>
-							<li>If the email was legitimate, we encourage you to report this incident to your administrator (including the text from the technical information panel)</li>
+							<li>If this was a legitimate email, you can whitelist the sender and future emails will not get stuck in the spam filter.</li>
+							<li>If you are sure that it is spam, you can blacklist the sender and all future emails from the sender will be discarded as spam.</li>
 						</ul>
 					</li>
 				</ol>

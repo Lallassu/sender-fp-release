@@ -27,9 +27,14 @@ $settings['mail_template']['headers'][] = "Content-type: text/plain; charset=utf
 $settings['mail_template']['headers'][] = "From: Example <support@example.com>";
 $settings['mail_template']['subject'] = "Release blocked email";
 
-$settings['database']['dsn'] = 'mysql:host=127.0.0.1;dbname=reportfp';
+$settings['database']['dsn'] = 'mysql:host=127.0.0.1;dbname=senderfprelease';
 $settings['database']['username'] = 'XXX';
 $settings['database']['password'] = 'XXX';
+
+# Blacklist/Whitelist database for https://github.com/halon/sp-enduser
+$settings['bw_database']['dsn'] = 'mysql:host=127.0.0.1;dbname=spenduser';
+$settings['bw_database']['username'] = 'XXX';
+$settings['bw_database']['password'] = 'XXX';
 
 $dbh = new PDO($settings['database']['dsn'], $settings['database']['username'], $settings['database']['password']);
 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

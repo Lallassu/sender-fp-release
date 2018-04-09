@@ -12,33 +12,33 @@ $(document).ready(function() {
 	if (currentState == 1) {
 		checkStatus();
 	}
-
-	$('#release-form').submit(function() {
-		disableForm();
-
-		var id = $('#id').val();
-		var token = $('#token').val();
-
-		$.post('?xhr', {
-			'page': 'release',
-			'id': id,
-			'token': token
-		}, function(data) {
-			if (data.error) {
-				showError(data.error);
-				enableForm();
-				return;
-			}
-			currentState = 1;
-			checkStatus();
-		}).fail(function(jqXHR, textStatus, errorThrown) {
-			showError(errorThrown);
-			enableForm();
-		});
-
-		return false;
-	});
 });
+
+function release(type) {
+    disableForm();
+
+    var id = $('#id').val();
+    var token = $('#token').val();
+
+    $.post('?xhr', {
+        'page': type,
+        'id': id,
+        'token': token
+    }, function(data) {
+        if (data.error) {
+            showError(data.error);
+            enableForm();
+            return;
+        }
+        currentState = 1;
+        checkStatus();
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        showError(errorThrown);
+        enableForm();
+    });
+
+    return false;
+}
 
 function checkStatus () {
 	fetchStatus();
@@ -85,10 +85,14 @@ function setFormState (state) {
 	$('#btn-release').removeClass('btn-success btn-info btn-warning');
 	$('#btn-release').addClass('btn-' + state);
 
+	$('#btn-whitelist').removeClass('btn-success btn-info btn-warning btn-danger');
+	$('#btn-whitelist').addClass('btn-' + state);
+	$('#btn-blacklist').removeClass('btn-success btn-info btn-warning btn-danger');
+	$('#btn-blacklist').addClass('btn-' + state);
+
 	switch (state) {
 		case 'info':
 			$('#btn-sending-label').prop('hidden', false);
-			$('#btn-release-label').prop('hidden', true);
 
 			$('#status-warning').prop('hidden', true);
 			$('#status-sending').prop('hidden', false);
@@ -96,7 +100,6 @@ function setFormState (state) {
 			break;
 		case 'success':
 			$('#btn-sending-label').prop('hidden', true);
-			$('#btn-release-label').prop('hidden', false);
 
 			$('#status-warning').prop('hidden', true);
 			$('#status-sending').prop('hidden', true);
@@ -107,10 +110,14 @@ function setFormState (state) {
 
 function disableForm () {
 	$('#btn-release').prop('disabled', true);
+	$('#btn-whitelist').prop('disabled', true);
+	$('#btn-blacklist').prop('disabled', true);
 }
 
 function enableForm () {
 	$('#btn-release').prop('disabled', false);
+	$('#btn-whitelist').prop('disabled', false);
+	$('#btn-blacklist').prop('disabled', false);
 }
 
 function showError ($msg) {
